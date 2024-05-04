@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST-ACELEROMETRO</title>
+    <style>
+      #demo-div {color: grey; border-radius: 0.3rem;}
+      #demo-div span, #demo-div #num-observed-events {color: black;}
+      h1 {margin-top: 0.5rem;}
+      h4 {margin-top: 0.66rem; font-size:1.33rem;}
+      #demo-div li {line-height: 42px; font-size:1.33rem;}
+      #demo-div ul {margin-bottom: 0.66rem;}
+      a {font-size:1.2rem;}
+    </style>
+</head>
+  </head>
+  <body>
+
+    <main role="main" class="container">
+      <div class="p-3 mb-2 bg-secondary" id="demo-div">
+
+        <a href="javascript: history.go(-1)">Volver a MENU</a>
+        <br><br>
+        <h1>
+          TEST ACELEROMETRO
+        </h1>
+
+
+        <br><br>
+        <a id="start_demo" class="btn btn-lg btn-success py-1" href="#" role="button">INICIAR</a>
+
+
+        <br><br>
+        <h4>Acelerómetro incluyendo G</h4>
+
+        <br><br>
+        <ul>
+            <li>eje-X: <span id="Accelerometer_gx">0</span><span> m/s<sup>2</sup></span></li>
+            <li>eje-Y: <span id="Accelerometer_gy">0</span><span> m/s<sup>2</sup></span></li>
+            <li>eje-Z: <span id="Accelerometer_gz">0</span><span> m/s<sup>2</sup></span></li>
+        </ul>
+
+        
+
+      </div>
+    </main>
+
+    
+
+
+<script>
+
+function updateFieldIfNotNull(fieldName, value, precision=10){
+  if (value != null)
+
+    if (value.toFixed(precision) > 9.8){
+      document.getElementById(fieldName).innerHTML = 9.8;
+    }
+    else if (value.toFixed(precision) < -9.8){
+      document.getElementById(fieldName).innerHTML = -9.8;
+    }
+    else{
+      document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+    }
+    
+}
+
+function handleMotion(event) {
+  updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+  updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
+  updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
+}
+
+
+let is_running = false;
+let demo_button = document.getElementById("start_demo");
+
+demo_button.onclick = function(e) {
+  e.preventDefault();
+  
+  // Request permission for iOS 13+ devices
+  if (
+    DeviceMotionEvent &&
+    typeof DeviceMotionEvent.requestPermission === "function"
+  ) {
+    DeviceMotionEvent.requestPermission();
+  }
+  
+  if (is_running){
+    window.removeEventListener("devicemotion", handleMotion);
+    //window.removeEventListener("deviceorientation", handleOrientation);
+    demo_button.innerHTML = "INICIAR";
+    demo_button.classList.add('btn-success');
+    demo_button.classList.remove('btn-danger');
+    is_running = false;
+  }else{
+    window.addEventListener("devicemotion", handleMotion);
+    //window.addEventListener("deviceorientation", handleOrientation);
+    //document.getElementById("start_demo").innerHTML = "PARAR";
+    demo_button.innerHTML = "PARAR";
+    demo_button.classList.remove('btn-success');
+    demo_button.classList.add('btn-danger');
+    is_running = true;
+  }
+};
+
+</script>
+
+  </body>
+</html>
